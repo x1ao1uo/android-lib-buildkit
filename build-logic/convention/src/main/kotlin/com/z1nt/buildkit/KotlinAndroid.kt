@@ -74,17 +74,25 @@ internal fun Project.configureKotlinJvm() {
 /**
  * Configure base Kotlin options
  */
-private inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() = configure<T> {
-    // Treat all Kotlin warnings as errors (disabled by default)
-    // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
-    val warningsAsErrors = providers.gradleProperty("warningsAsErrors").map {
-        it.toBoolean()
-    }.orElse(false)
-    when (this) {
-        is KotlinAndroidProjectExtension -> compilerOptions
-        is KotlinJvmProjectExtension -> compilerOptions
-        else -> TODO("Unsupported project extension $this ${T::class}")
-    }.apply {
+private inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() {
+    // Optional JDK toolchain pin, e.g. buildkit.jvmToolchain=25. When unset the
+    // toolchain is left to the consumer (Gradle daemon JVM by default).
+    providers.gradleProperty("buildkit.jvmToolchain").orNull?.toIntOrNull()?.let { toolchain ->
+        configure<T> {
+            jvmToolchain(toolchain)
+        }
+    }
+    configure<T> {
+        // Treat all Kotlin warnings as errors (disabled by default)
+        // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
+        val warningsAsErrors = providers.gradleProperty("warningsAsErrors").map {
+            it.toBoolean()
+        }.orElse(false)
+        when (this) {
+            is KotlinAndroidProjectExtension -> compilerOptions
+            is KotlinJvmProjectExtension -> compilerOptions
+            else -> TODO("Unsupported project extension $this ${T::class}")
+        }.apply {
         jvmTarget = JvmTarget.JVM_17
         allWarningsAsErrors = warningsAsErrors
         freeCompilerArgs.add(
@@ -105,5 +113,6 @@ private inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() =
              */
             "-Xconsistent-data-class-copy-visibility",
         )
+    }
     }
 }

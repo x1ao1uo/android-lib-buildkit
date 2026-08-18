@@ -60,8 +60,12 @@ internal fun Project.configureAndroidCompose(
             .relativeToRootProject("compose-reports")
             .let(reportsDestination::set)
 
+        // Only point Compose at the root stability configuration file when the
+        // consumer actually ships one; otherwise every Compose module would log
+        // a missing-file warning.
         @Suppress("UnstableApiUsage")
-        stabilityConfigurationFiles
-            .add(isolated.rootProject.projectDirectory.file("compose_compiler_config.conf"))
+        isolated.rootProject.projectDirectory.file("compose_compiler_config.conf")
+            .takeIf { it.asFile.exists() }
+            ?.let(stabilityConfigurationFiles::add)
     }
 }

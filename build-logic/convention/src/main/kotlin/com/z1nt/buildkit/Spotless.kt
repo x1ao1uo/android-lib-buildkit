@@ -39,22 +39,56 @@ internal fun Project.configureSpotlessForJvm() {
 
 internal fun Project.configureSpotlessForRootProject() {
     apply(plugin = "com.diffplug.spotless")
+    // Consumers whose sources live outside module directories (e.g. source sets
+    // pointing at root-level core/ or feature/ trees) set
+    // `buildkit.spotless.recursive=true` to lint the whole tree from the root
+    // instead of the default NIA build-logic layout.
+    val recursive = providers.gradleProperty("buildkit.spotless.recursive")
+        .map { it.equals("true", ignoreCase = true) }
+        .getOrElse(false)
+    val ktlintVersion = libs.findVersion("ktlint").get().requiredVersion
     extensions.configure<SpotlessExtension> {
         kotlin {
-            target("build-logic/convention/src/**/*.kt")
-            ktlint(libs.findVersion("ktlint").get().requiredVersion).editorConfigOverride(
+            if (recursive) {
+                target("**/src/**/*.kt")
+                targetExclude("**/build/**")
+            } else {
+                target("build-logic/convention/src/**/*.kt")
+            }
+            ktlint(ktlintVersion).editorConfigOverride(
                 mapOf("android" to "true"),
             )
             licenseHeaderFile(rootDir.resolve("spotless/copyright.kt"))
             endWithNewline()
         }
-        format("kts") {
-            target("*.kts")
-            target("build-logic/*.kts")
-            target("build-logic/convention/*.kts")
-            // Look for the first line that doesn't have a block comment (assumed to be the license)
-            licenseHeaderFile(rootDir.resolve("spotless/copyright.kts"), "(^(?![\\/ ]\\*).*$)")
-            endWithNewline()
+        if (recursive) {
+            kotlinGradle {
+                target("**/*.kts")
+                targetExclude("**/build/**", ".gradle/**", "spotless/**")
+                ktlint(ktlintVersion).editorConfigOverride(
+                    mapOf("android" to "true"),
+                )
+                // Look for the first line that doesn't have a block comment (assumed to be the license)
+                licenseHeaderFile(rootDir.resolve("spotless/copyright.kts"), "(^(?![\\/ ]\\*).*$)")
+                endWithNewline()
+            }
+        } else {
+            format("kts") {
+                target("*.kts")
+                target("build-logic/*.kts")
+                target("build-logic/convention/*.kts")
+                // Look for the first line that doesn't have a block comment (assumed to be the license)
+                licenseHeaderFile(rootDir.resolve("spotless/copyright.kts"), "(^(?![\\/ ]\\*).*$)")
+                endWithNewline()
+            }
+        }
+        if (recursive) {
+            format("xml") {
+                target("**/src/**/*.xml")
+                targetExclude("**/build/**")
+                licenseHeaderFile(rootDir.resolve("spotless/copyright.xml"), "(<[^!?])")
+                endWithNewline()
+            }
         }
     }
 }
