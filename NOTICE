@@ -1,0 +1,20 @@
+android-lib-buildkit
+====================
+
+Derived from https://github.com/android/nowinandroid
+("Now in Android", Copyright The Android Open Source Project),
+which is licensed under the Apache License, Version 2.0.
+
+See LICENSE for the full license text.
+
+Changes relative to the upstream project include, but are not limited to:
+
+- Extraction of the build/quality toolchain (build-logic convention plugins,
+  lint checks, spotless config, ui-test-hilt-manifest, benchmarks) into a
+  standalone repository.
+- Renaming of the package namespace from
+  `com.google.samples.apps.nowinandroid` to `com.z1nt.buildkit`, and of the
+  `Nia*` symbols (`NiaIssueRegistry` -> `BuildkitIssueRegistry`,
+  `NiaFlavor` -> `BuildkitFlavor`, `NiaBuildType` -> `BuildkitBuildType`).
+- Gradle plugin id prefix changed from `nowinandroid.*` to `buildkit.*`.
+- Removal of Firebase / Google Services / dependency-guard integrations.
