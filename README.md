@@ -54,8 +54,18 @@ Convention 插件从消费方 `gradle/libs.versions.toml` 的 `[versions]` 段�
 
 | Property | 作用 |
 |---|---|
-| `buildkit.resourcePrefix` | 覆盖 library 模块的 `resourcePrefix`；缺省按模块路径派生（如 `:core:module1` → `core_module1_`） |
+| `buildkit.resourcePrefix` | 覆盖 library 模块的 `resourcePrefix`；缺省按模块路径派生（如 `:core:module1` → `core_module1_`）。显式设为 `off` / `false` / 空字符串时完全不设置 `resourcePrefix`（不强制资源前缀检查），适合资源不在模块目录内的项目 |
+| `buildkit.flavors` | 设为 `false`（不区分大小写）时跳过 `buildkit.android.library` 的 flavor 注入（`contentType` dimension + `demo`/`prod`）；缺省保持注入 |
 | `buildkit.jacoco.extraExclusions` | 追加 Jacoco 覆盖率排除规则，逗号分隔的 class glob（并入内置的 Android/Dagger/Hilt 生成类排除列表） |
+
+无 flavors、资源不在模块目录的项目（如 android-mkaf）在 `gradle.properties` 中：
+
+```properties
+buildkit.flavors=false
+buildkit.resourcePrefix=off
+```
+
+注意：关闭 flavors 后不要再 apply `buildkit.android.application.flavors`，也不要引用 `BuildType`/`Flavor` 相关的 demo/prod sourceSet。
 
 ### Robolectric 目录约定
 

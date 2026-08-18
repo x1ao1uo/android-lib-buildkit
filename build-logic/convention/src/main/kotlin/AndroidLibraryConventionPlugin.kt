@@ -56,15 +56,32 @@ abstract class AndroidLibraryConventionPlugin : Plugin<Project> {
                 }
                 defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 testOptions.animationsDisabled = true
-                configureFlavors(this)
+                // Consumers can skip flavor injection (contentType dimension + demo/prod)
+                // with `-Pbuildkit.flavors=false`, e.g. flavorless projects like android-mkaf.
+                val flavorsEnabled =
+                    providers.gradleProperty("buildkit.flavors").orNull
+                        ?.equals("false", ignoreCase = true) != true
+                if (flavorsEnabled) {
+                    configureFlavors(this)
+                }
                 configureGradleManagedDevices(this)
                 // The resource prefix is derived from the module name,
                 // so resources inside ":core:module1" must be prefixed with "core_module1_".
-                // Consumers can override it with the `buildkit.resourcePrefix` Gradle property.
-                resourcePrefix =
+                // Consumers can override it with the `buildkit.resourcePrefix` Gradle property,
+                // or disable the enforcement entirely by setting it to "off"/"false"/"".
+                val resourcePrefixOverride =
                     providers.gradleProperty("buildkit.resourcePrefix").orNull
-                        ?: path.split("""\W""".toRegex()).drop(1).distinct()
+                if (resourcePrefixOverride == null) {
+                    resourcePrefix =
+                        path.split("""\W""".toRegex()).drop(1).distinct()
                             .joinToString(separator = "_").lowercase() + "_"
+                } else if (
+                    !resourcePrefixOverride.equals("off", ignoreCase = true) &&
+                    !resourcePrefixOverride.equals("false", ignoreCase = true) &&
+                    resourcePrefixOverride.isNotEmpty()
+                ) {
+                    resourcePrefix = resourcePrefixOverride
+                }
             }
             extensions.configure<LibraryAndroidComponentsExtension> {
                 configurePrintApksTask(this)
