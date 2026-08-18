@@ -22,6 +22,7 @@ import com.z1nt.buildkit.configureKotlinAndroid
 import com.z1nt.buildkit.configurePrintApksTask
 import com.z1nt.buildkit.configureSpotlessForAndroid
 import com.z1nt.buildkit.disableUnnecessaryAndroidTests
+import com.z1nt.buildkit.findVersionOrDefault
 import com.z1nt.buildkit.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -37,17 +38,33 @@ abstract class AndroidLibraryConventionPlugin : Plugin<Project> {
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
-                testOptions.targetSdk = 36
-                lint.targetSdk = 36
+                val targetSdkVersion = findVersionOrDefault("targetSdk", 36)
+                testOptions.targetSdk = targetSdkVersion
+                lint.targetSdk = targetSdkVersion
+                testOptions.unitTests.all { test ->
+                    test.jvmArgs(
+                        "--enable-native-access=ALL-UNNAMED",
+                        "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED",
+                    )
+                }
+                // Consumers may provide Robolectric resource overrides (e.g. shadows for SDK
+                // levels newer than Robolectric supports) under gradle/robolectric/.
+                val robolectricDir =
+                    isolated.rootProject.projectDirectory.dir("gradle/robolectric").asFile
+                if (robolectricDir.isDirectory) {
+                    sourceSets.getByName("test").resources.srcDir(robolectricDir)
+                }
                 defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 testOptions.animationsDisabled = true
                 configureFlavors(this)
                 configureGradleManagedDevices(this)
                 // The resource prefix is derived from the module name,
-                // so resources inside ":core:module1" must be prefixed with "core_module1_"
+                // so resources inside ":core:module1" must be prefixed with "core_module1_".
+                // Consumers can override it with the `buildkit.resourcePrefix` Gradle property.
                 resourcePrefix =
-                    path.split("""\W""".toRegex()).drop(1).distinct().joinToString(separator = "_")
-                        .lowercase() + "_"
+                    providers.gradleProperty("buildkit.resourcePrefix").orNull
+                        ?: path.split("""\W""".toRegex()).drop(1).distinct()
+                            .joinToString(separator = "_").lowercase() + "_"
             }
             extensions.configure<LibraryAndroidComponentsExtension> {
                 configurePrintApksTask(this)

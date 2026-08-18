@@ -21,6 +21,7 @@ import com.z1nt.buildkit.configureGradleManagedDevices
 import com.z1nt.buildkit.configureKotlinAndroid
 import com.z1nt.buildkit.configurePrintApksTask
 import com.z1nt.buildkit.configureSpotlessForAndroid
+import com.z1nt.buildkit.findVersionOrDefault
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
@@ -34,8 +35,15 @@ abstract class AndroidApplicationConventionPlugin : Plugin<Project> {
 
             extensions.configure<ApplicationExtension> {
                 configureKotlinAndroid(this)
-                defaultConfig.targetSdk = 36
+                defaultConfig.targetSdk = findVersionOrDefault("targetSdk", 36)
                 testOptions.animationsDisabled = true
+                // Consumers may provide Robolectric resource overrides (e.g. shadows for SDK
+                // levels newer than Robolectric supports) under gradle/robolectric/.
+                val robolectricDir =
+                    isolated.rootProject.projectDirectory.dir("gradle/robolectric").asFile
+                if (robolectricDir.isDirectory) {
+                    sourceSets.getByName("test").resources.srcDir(robolectricDir)
+                }
                 configureGradleManagedDevices(this)
             }
             extensions.configure<ApplicationAndroidComponentsExtension> {

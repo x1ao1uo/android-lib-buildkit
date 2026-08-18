@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import androidx.room.gradle.RoomExtension
+import androidx.room3.gradle.RoomExtension
 import com.google.devtools.ksp.gradle.KspExtension
 import com.z1nt.buildkit.libs
 import org.gradle.api.Plugin
@@ -27,7 +27,7 @@ class AndroidRoomConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
-            apply(plugin = "androidx.room")
+            apply(plugin = "androidx.room3")
             apply(plugin = "com.google.devtools.ksp")
 
             extensions.configure<KspExtension> {
@@ -42,9 +42,9 @@ class AndroidRoomConventionPlugin : Plugin<Project> {
             }
 
             dependencies {
-                "implementation"(libs.findLibrary("room.runtime").get())
-                "implementation"(libs.findLibrary("room.ktx").get())
-                "ksp"(libs.findLibrary("room.compiler").get())
+                // api: consumers call RoomDatabase APIs (withWriteTransaction, clearAllTables).
+                "api"(libs.findLibrary("room-runtime").get())
+                "ksp"(libs.findLibrary("room-compiler").get())
             }
         }
     }

@@ -44,6 +44,17 @@ private val coverageExclusions = listOf(
     "**/Manifest*.*",
     "**/*_Hilt*.class",
     "**/Hilt_*.class",
+    // Dagger / Hilt generated classes
+    "**/HiltWrapper_*.class",
+    "**/Dagger*.class",
+    "**/*_Factory*.class",
+    "**/*_MembersInjector*.class",
+    "**/*Module_*Factory*.class",
+    "**/*_ComponentTreeDeps*.class",
+    "**/*_Impl*.class",
+    "**/*_GeneratedInjector*.class",
+    "**/_com_*.class",
+    "**/*ComposableSingletons*.class",
 )
 
 private fun String.capitalize() = replaceFirstChar {
@@ -73,6 +84,14 @@ internal fun Project.configureJacoco(
         toolVersion = libs.findVersion("jacoco").get().toString()
     }
 
+    // Consumers can append project-specific exclusion globs via the
+    // `buildkit.jacoco.extraExclusions` Gradle property (comma-separated).
+    val extraExclusions = providers.gradleProperty("buildkit.jacoco.extraExclusions")
+        .map { value -> value.split(",").map { it.trim() }.filter { it.isNotEmpty() } }
+        .orElse(emptyList())
+        .get()
+    val allExclusions = coverageExclusions + extraExclusions
+
     androidComponentsExtension.onVariants { variant ->
         val myObjFactory = project.objects
         val buildDir = layout.buildDirectory.get().asFile
@@ -84,11 +103,12 @@ internal fun Project.configureJacoco(
                 "create${variant.name.capitalize()}CombinedCoverageReport",
                 JacocoReport::class,
             ) {
+                dependsOn("test${variant.name.capitalize()}UnitTest")
                 classDirectories.setFrom(
                     allJars,
                     allDirectories.map { dirs ->
                         dirs.map { dir ->
-                            myObjFactory.fileTree().setDir(dir).exclude(coverageExclusions)
+                            myObjFactory.fileTree().setDir(dir).exclude(allExclusions)
                         }
                     },
                 )

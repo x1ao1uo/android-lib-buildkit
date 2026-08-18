@@ -34,7 +34,32 @@ plugins {
 }
 ```
 
-插件 id 一览：`buildkit.android.application`、`buildkit.android.application.compose`、`buildkit.android.application.flavors`、`buildkit.android.application.jacoco`、`buildkit.android.library`、`buildkit.android.library.compose`、`buildkit.android.library.jacoco`、`buildkit.android.feature.api`、`buildkit.android.feature.impl`、`buildkit.android.test`、`buildkit.android.room`、`buildkit.android.lint`、`buildkit.hilt`、`buildkit.jvm.library`、`buildkit.root`。
+插件 id 一览：`buildkit.android.application`、`buildkit.android.application.compose`、`buildkit.android.application.firebase`、`buildkit.android.application.flavors`、`buildkit.android.application.jacoco`、`buildkit.android.library`、`buildkit.android.library.compose`、`buildkit.android.library.jacoco`、`buildkit.android.feature.api`、`buildkit.android.feature.impl`、`buildkit.android.test`、`buildkit.android.room`、`buildkit.android.lint`、`buildkit.hilt`、`buildkit.jvm.library`、`buildkit.root`。
+
+## 消费方配置
+
+### Version catalog 键（均可选）
+
+Convention 插件从消费方 `gradle/libs.versions.toml` 的 `[versions]` 段读取 SDK 版本；键缺失时回退到内置默认值，不报错：
+
+| 键 | 用途 | 缺省值 |
+|---|---|---|
+| `compileSdk` | `compileSdk` | 36 |
+| `minSdk` | `defaultConfig.minSdk` | 23 |
+| `targetSdk` | `defaultConfig.targetSdk`、`lint.targetSdk`、`testOptions.targetSdk` | 36 |
+
+`buildkit.android.application.firebase` 额外要求消费方 catalog 提供 `firebase-bom`、`firebase-performance`、`firebase-crashlytics` 三个 library 键，且 `com.google.gms.google-services` / `com.google.firebase.firebase-perf` / `com.google.firebase.crashlytics` 插件在消费方 classpath 可用（`com.google.gms.google-services` 仅当模块存在 `google-services.json` 时才会被 apply）。
+
+### Gradle property 开关
+
+| Property | 作用 |
+|---|---|
+| `buildkit.resourcePrefix` | 覆盖 library 模块的 `resourcePrefix`；缺省按模块路径派生（如 `:core:module1` → `core_module1_`） |
+| `buildkit.jacoco.extraExclusions` | 追加 Jacoco 覆盖率排除规则，逗号分隔的 class glob（并入内置的 Android/Dagger/Hilt 生成类排除列表） |
+
+### Robolectric 目录约定
+
+当消费方根工程存在 `gradle/robolectric/` 目录时，application/library convention 插件会把它挂为 `test` sourceSet 的 resources srcDir（用于 Robolectric 资源/shadow 覆盖）；目录不存在则完全跳过。
 
 ### 2. 自定义 Lint（`lintChecks` 依赖）
 
@@ -52,7 +77,7 @@ dependencies {
 
 ## 与上游的差异（裁剪说明）
 
-- 删除了 Firebase 相关 convention plugin（`AndroidApplicationFirebaseConventionPlugin`）及 Crashlytics/Perf/gms 依赖。
+- Firebase convention plugin（`buildkit.android.application.firebase`）按改进版恢复：仅当模块存在 `google-services.json` 才 apply `com.google.gms.google-services`，且不含 analytics 依赖。
 - 移除了 `com.dropbox.dependency-guard` 的接入。
 - `DesignSystemDetector` 中的推荐组件名改为 `Buildkit*` 前缀（检测逻辑保留，作为自定义 Lint 样例）。
 - `benchmarks/` 不接入构建，仅保留源码作参考。

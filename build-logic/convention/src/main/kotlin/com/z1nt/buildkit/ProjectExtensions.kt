@@ -23,3 +23,10 @@ import org.gradle.kotlin.dsl.getByType
 
 val Project.libs
     get(): VersionCatalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
+
+/**
+ * Reads an integer version (e.g. `compileSdk` / `minSdk` / `targetSdk`) from the consumer's
+ * version catalog, falling back to [default] when the key is not declared there.
+ */
+internal fun Project.findVersionOrDefault(name: String, default: Int): Int =
+    libs.findVersion(name).map { it.requiredVersion.toInt() }.orElse(default)

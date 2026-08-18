@@ -43,7 +43,7 @@ class AndroidLintConventionPlugin : Plugin<Project> {
 
 private fun Lint.configure() {
     xmlReport = true
-    sarifReport = true
+    sarifReport = false
     checkDependencies = true
     disable += "GradleDependency"
 }
