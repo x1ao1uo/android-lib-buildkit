@@ -31,6 +31,7 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.TextFormat.RAW
 import com.intellij.psi.PsiMethod
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UMethod
 import java.util.EnumSet
 import kotlin.io.path.Path
 
@@ -49,7 +50,11 @@ class TestMethodNameDetector : Detector(), SourceCodeScanner {
         annotationInfo: AnnotationInfo,
         usageInfo: AnnotationUsageInfo,
     ) {
-        val method = usageInfo.referenced as? PsiMethod ?: return
+        // Since lint 32.x, `referenced` is a UMethod (e.g. KotlinUMethod)
+        // rather than a PsiMethod for Kotlin sources.
+        val method = usageInfo.referenced as? PsiMethod
+            ?: (usageInfo.referenced as? UMethod)?.javaPsi
+            ?: return
 
         method.detectPrefix(context, usageInfo)
         method.detectFormat(context, usageInfo)
