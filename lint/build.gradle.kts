@@ -23,9 +23,13 @@ plugins {
 }
 
 // Published coordinates so composite builds can substitute
-// `lintChecks("com.z1nt.buildkit:lint:0.1.0")` with this project.
-group = "com.z1nt.buildkit"
+// `lintChecks("com.z1nt:android-lib-buildkit-lint:0.1.0")` with this project.
+group = "com.z1nt"
 version = "0.1.0"
+
+base {
+    archivesName = "android-lib-buildkit-lint"
+}
 
 java {
     // Up to Java 11 APIs are available through desugaring
