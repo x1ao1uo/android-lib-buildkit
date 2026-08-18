@@ -22,6 +22,11 @@ plugins {
     alias(libs.plugins.buildkit.android.lint)
 }
 
+// Published coordinates so composite builds can substitute
+// `lintChecks("com.z1nt.buildkit:lint:0.1.0")` with this project.
+group = "com.z1nt.buildkit"
+version = "0.1.0"
+
 java {
     // Up to Java 11 APIs are available through desugaring
     // https://developer.android.com/studio/write/java11-minimal-support-table
