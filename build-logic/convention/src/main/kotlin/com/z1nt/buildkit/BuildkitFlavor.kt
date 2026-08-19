@@ -24,7 +24,7 @@ import org.gradle.kotlin.dsl.invoke
 
 @Suppress("EnumEntryName")
 enum class FlavorDimension {
-    contentType,
+    contentType
 }
 
 // The content for the app can either come from local static data which is useful for demo
@@ -33,12 +33,12 @@ enum class FlavorDimension {
 @Suppress("EnumEntryName")
 enum class BuildkitFlavor(val dimension: FlavorDimension, val applicationIdSuffix: String? = null) {
     demo(FlavorDimension.contentType, applicationIdSuffix = ".demo"),
-    prod(FlavorDimension.contentType),
+    prod(FlavorDimension.contentType)
 }
 
 fun configureFlavors(
     commonExtension: CommonExtension,
-    flavorConfigurationBlock: ProductFlavor.(flavor: BuildkitFlavor) -> Unit = {},
+    flavorConfigurationBlock: ProductFlavor.(flavor: BuildkitFlavor) -> Unit = {}
 ) {
     commonExtension.apply {
         FlavorDimension.entries.forEach { flavorDimension ->
@@ -50,7 +50,9 @@ fun configureFlavors(
                 register(buildkitFlavor.name) {
                     dimension = buildkitFlavor.dimension.name
                     flavorConfigurationBlock(this, buildkitFlavor)
-                    if (commonExtension is ApplicationExtension && this is ApplicationProductFlavor) {
+                    if (commonExtension is ApplicationExtension &&
+                        this is ApplicationProductFlavor
+                    ) {
                         if (buildkitFlavor.applicationIdSuffix != null) {
                             applicationIdSuffix = buildkitFlavor.applicationIdSuffix
                         }

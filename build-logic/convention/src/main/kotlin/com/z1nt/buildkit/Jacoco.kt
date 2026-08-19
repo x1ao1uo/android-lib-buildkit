@@ -21,6 +21,7 @@ import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.ScopedArtifacts
 import com.android.build.api.variant.SourceDirectories
+import java.util.Locale
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
@@ -34,7 +35,6 @@ import org.gradle.kotlin.dsl.withType
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension
 import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
 import org.gradle.testing.jacoco.tasks.JacocoReport
-import java.util.Locale
 
 private val coverageExclusions = listOf(
     // Android
@@ -54,7 +54,7 @@ private val coverageExclusions = listOf(
     "**/*_Impl*.class",
     "**/*_GeneratedInjector*.class",
     "**/_com_*.class",
-    "**/*ComposableSingletons*.class",
+    "**/*ComposableSingletons*.class"
 )
 
 private fun String.capitalize() = replaceFirstChar {
@@ -72,7 +72,7 @@ private fun String.capitalize() = replaceFirstChar {
  */
 internal fun Project.configureJacoco(
     commonExtension: CommonExtension,
-    androidComponentsExtension: AndroidComponentsExtension<*, *, *>,
+    androidComponentsExtension: AndroidComponentsExtension<*, *, *>
 ) {
     // Configure only the debug build, otherwise it will force the debuggable flag on release buildTypes as well
     commonExtension.buildTypes.named("debug") {
@@ -101,7 +101,7 @@ internal fun Project.configureJacoco(
         val reportTask =
             tasks.register(
                 "create${variant.name.capitalize()}CombinedCoverageReport",
-                JacocoReport::class,
+                JacocoReport::class
             ) {
                 dependsOn("test${variant.name.capitalize()}UnitTest")
                 classDirectories.setFrom(
@@ -110,7 +110,7 @@ internal fun Project.configureJacoco(
                         dirs.map { dir ->
                             myObjFactory.fileTree().setDir(dir).exclude(allExclusions)
                         }
-                    },
+                    }
                 )
                 reports {
                     xml.required = true
@@ -124,16 +124,18 @@ internal fun Project.configureJacoco(
                 sourceDirectories.setFrom(
                     files(
                         variant.sources.java.toFilePaths(),
-                        variant.sources.kotlin.toFilePaths(),
-                    ),
+                        variant.sources.kotlin.toFilePaths()
+                    )
                 )
 
                 executionData.setFrom(
-                    project.fileTree("$buildDir/outputs/unit_test_code_coverage/${variant.name}UnitTest")
+                    project.fileTree(
+                        "$buildDir/outputs/unit_test_code_coverage/${variant.name}UnitTest"
+                    )
                         .matching { include("**/*.exec") },
 
                     project.fileTree("$buildDir/outputs/code_coverage/${variant.name}AndroidTest")
-                        .matching { include("**/*.ec") },
+                        .matching { include("**/*.ec") }
                 )
             }
 
@@ -142,7 +144,7 @@ internal fun Project.configureJacoco(
             .toGet(
                 ScopedArtifact.CLASSES,
                 { _ -> allJars },
-                { _ -> allDirectories },
+                { _ -> allDirectories }
             )
     }
 

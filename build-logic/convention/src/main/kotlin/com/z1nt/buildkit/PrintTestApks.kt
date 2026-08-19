@@ -20,6 +20,7 @@ import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.BuiltArtifactsLoader
 import com.android.build.api.variant.HasAndroidTest
+import java.io.File
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
@@ -35,7 +36,6 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.assign
 import org.gradle.work.DisableCachingByDefault
-import java.io.File
 
 internal fun Project.configurePrintApksTask(extension: AndroidComponentsExtension<*, *, *>) {
     extension.onVariants { variant ->
@@ -56,7 +56,7 @@ internal fun Project.configurePrintApksTask(extension: AndroidComponentsExtensio
             if (artifact != null && testSources != null) {
                 tasks.register(
                     "${variant.name}PrintTestApk",
-                    PrintApkLocationTask::class.java,
+                    PrintApkLocationTask::class.java
                 ) {
                     apkFolder = artifact
                     builtArtifactsLoader = loader

@@ -20,6 +20,7 @@ import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.Aapt2
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.google.common.truth.Truth.assertWithMessage
+import javax.inject.Inject
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
@@ -38,7 +39,6 @@ import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.register
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.process.ExecOperations
-import javax.inject.Inject
 
 @CacheableTask
 abstract class GenerateBadgingTask : DefaultTask() {
@@ -64,7 +64,7 @@ abstract class GenerateBadgingTask : DefaultTask() {
                 aapt2Executable.get().asFile.absolutePath,
                 "dump",
                 "badging",
-                apk.get().asFile.absolutePath,
+                apk.get().asFile.absolutePath
             )
             standardOutput = badging.asFile.get().outputStream()
         }
@@ -97,7 +97,7 @@ abstract class CheckBadgingTask : DefaultTask() {
     fun taskAction() {
         assertWithMessage(
             "Generated badging is different from golden badging! " +
-                "If this change is intended, run ./gradlew ${updateBadgingTaskName.get()}",
+                "If this change is intended, run ./gradlew ${updateBadgingTaskName.get()}"
         )
             .that(generatedBadging.get().asFile.readText())
             .isEqualTo(goldenBadging.get().asFile.readText())
@@ -108,9 +108,7 @@ private fun String.capitalized() = replaceFirstChar {
     if (it.isLowerCase()) it.titlecase() else it.toString()
 }
 
-fun Project.configureBadgingTasks(
-    componentsExtension: ApplicationAndroidComponentsExtension,
-) {
+fun Project.configureBadgingTasks(componentsExtension: ApplicationAndroidComponentsExtension) {
     // Registers a callback to be called, when a new variant is configured
     componentsExtension.onVariants { variant ->
         // Registers a new task to verify the app bundle.
@@ -121,7 +119,7 @@ fun Project.configureBadgingTasks(
                 apk = variant.artifacts.get(SingleArtifact.APK_FROM_BUNDLE)
                 aapt2Executable = componentsExtension.sdkComponents.aapt2.flatMap(Aapt2::executable)
                 badging = project.layout.buildDirectory.file(
-                    "outputs/apk_from_bundle/${variant.name}/${variant.name}-badging.txt",
+                    "outputs/apk_from_bundle/${variant.name}/${variant.name}-badging.txt"
                 )
             }
 

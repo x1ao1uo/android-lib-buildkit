@@ -16,10 +16,10 @@
 
 import com.z1nt.buildkit.configureGraphTasks
 import com.z1nt.buildkit.configureSpotlessForRootProject
+import javax.inject.Inject
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.configuration.BuildFeatures
-import javax.inject.Inject
 
 abstract class RootPlugin : Plugin<Project> {
     @get:Inject abstract val buildFeatures: BuildFeatures
@@ -33,6 +33,5 @@ abstract class RootPlugin : Plugin<Project> {
     }
 }
 
-private fun BuildFeatures.isIsolatedProjectsEnabled(): Boolean {
-    return isolatedProjects.active.getOrElse(false)
-}
+private fun BuildFeatures.isIsolatedProjectsEnabled(): Boolean =
+    isolatedProjects.active.getOrElse(false)

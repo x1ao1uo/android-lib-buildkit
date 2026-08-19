@@ -16,10 +16,10 @@
 
 package com.z1nt.buildkit
 
+import java.net.URI
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
-import java.net.URI
 
 abstract class HttpsUrlValueSource : ValueSource<String, HttpsUrlValueSource.Parameters> {
     interface Parameters : ValueSourceParameters {

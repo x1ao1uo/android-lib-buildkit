@@ -21,5 +21,5 @@ package com.z1nt.buildkit
  */
 enum class BuildkitBuildType(val applicationIdSuffix: String? = null) {
     DEBUG(".debug"),
-    RELEASE,
+    RELEASE
 }

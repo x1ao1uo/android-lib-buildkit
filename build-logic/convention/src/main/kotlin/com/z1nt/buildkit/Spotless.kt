@@ -56,7 +56,9 @@ internal fun Project.configureSpotlessForRootProject() {
                 target("build-logic/convention/src/**/*.kt")
             }
             ktlint(ktlintVersion).editorConfigOverride(
-                mapOf("android" to "true"),
+                // ktlint 1.8 removed the legacy `android` boolean property;
+                // android_studio is the documented replacement code style.
+                mapOf("ktlint_code_style" to "android_studio")
             )
             licenseHeaderFile(rootDir.resolve("spotless/copyright.kt"))
             endWithNewline()
@@ -66,7 +68,9 @@ internal fun Project.configureSpotlessForRootProject() {
                 target("**/*.kts")
                 targetExclude("**/build/**", ".gradle/**", "spotless/**")
                 ktlint(ktlintVersion).editorConfigOverride(
-                    mapOf("android" to "true"),
+                    // ktlint 1.8 removed the legacy `android` boolean property;
+                    // android_studio is the documented replacement code style.
+                    mapOf("ktlint_code_style" to "android_studio")
                 )
                 // Look for the first line that doesn't have a block comment (assumed to be the license)
                 licenseHeaderFile(rootDir.resolve("spotless/copyright.kts"), "(^(?![\\/ ]\\*).*$)")
@@ -99,7 +103,9 @@ private fun Project.configureSpotlessCommon() {
         kotlin {
             target("src/**/*.kt")
             ktlint(libs.findVersion("ktlint").get().requiredVersion).editorConfigOverride(
-                mapOf("android" to "true"),
+                // ktlint 1.8 removed the legacy `android` boolean property;
+                // android_studio is the documented replacement code style.
+                mapOf("ktlint_code_style" to "android_studio")
             )
             licenseHeaderFile(rootDir.resolve("spotless/copyright.kt"))
             endWithNewline()

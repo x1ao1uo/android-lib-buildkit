@@ -45,7 +45,7 @@ class AndroidFeatureImplConventionPlugin : Plugin<Project> {
                 "implementation"(libs.findLibrary("androidx.tracing.ktx").get())
 
                 "androidTestImplementation"(
-                    libs.findLibrary("androidx.lifecycle.runtimeTesting").get(),
+                    libs.findLibrary("androidx.lifecycle.runtimeTesting").get()
                 )
             }
         }

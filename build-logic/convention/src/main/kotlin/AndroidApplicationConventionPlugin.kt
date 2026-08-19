@@ -35,7 +35,7 @@ abstract class AndroidApplicationConventionPlugin : Plugin<Project> {
 
             extensions.configure<ApplicationExtension> {
                 configureKotlinAndroid(this)
-                defaultConfig.targetSdk = findVersionOrDefault("targetSdk", 36)
+                defaultConfig.targetSdk = findVersionOrDefault("targetSdk", 37)
                 testOptions.animationsDisabled = true
                 // Consumers may provide Robolectric resource overrides (e.g. shadows for SDK
                 // levels newer than Robolectric supports) under gradle/robolectric/.

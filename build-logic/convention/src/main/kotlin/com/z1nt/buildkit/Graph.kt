@@ -18,6 +18,7 @@ package com.z1nt.buildkit
 
 import com.android.utils.associateWithNotNull
 import com.z1nt.buildkit.PluginType.Unknown
+import kotlin.text.RegexOption.DOT_MATCHES_ALL
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -35,7 +36,6 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
-import kotlin.text.RegexOption.DOT_MATCHES_ALL
 
 /**
  * Generates module dependency graphs with `graphDump` task, and update the corresponding `README.md` file with `graphUpdate`.
@@ -49,9 +49,10 @@ import kotlin.text.RegexOption.DOT_MATCHES_ALL
  */
 private class Graph(
     private val root: Project,
-    private val dependencies: MutableMap<Project, Set<Pair<Configuration, Project>>> = mutableMapOf(),
+    private val dependencies: MutableMap<Project, Set<Pair<Configuration, Project>>> =
+        mutableMapOf(),
     private val plugins: MutableMap<Project, PluginType> = mutableMapOf(),
-    private val seen: MutableSet<String> = mutableSetOf(),
+    private val seen: MutableSet<String> = mutableSetOf()
 ) {
 
     private val ignoredProjects = root.providers.gradleProperty("graph.ignoredProjects")
@@ -67,7 +68,7 @@ private class Graph(
         seen += project.path
         plugins.putIfAbsent(
             project,
-            PluginType.entries.firstOrNull { project.pluginManager.hasPlugin(it.id) } ?: Unknown,
+            PluginType.entries.firstOrNull { project.pluginManager.hasPlugin(it.id) } ?: Unknown
         )
         dependencies.compute(project) { _, u -> u.orEmpty() }
         project.configurations
@@ -76,7 +77,10 @@ private class Graph(
             .flatMap { (c, value) -> value.map { dep -> c to project.project(dep.path) } }
             .filter { (_, p) -> p.path !in ignoredProjects.get() }
             .forEach { (configuration: Configuration, projectDependency: Project) ->
-                dependencies.compute(project) { _, u -> u.orEmpty() + (configuration to projectDependency) }
+                dependencies.compute(project) { _, u ->
+                    u.orEmpty() +
+                        (configuration to projectDependency)
+                }
                 invoke(projectDependency)
             }
         return this
@@ -96,33 +100,33 @@ internal enum class PluginType(val id: String, val ref: String, val style: Strin
     AndroidApplication(
         id = "buildkit.android.application",
         ref = "android-application",
-        style = "fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000",
+        style = "fill:#CAFFBF,stroke:#000,stroke-width:2px,color:#000"
     ),
     AndroidFeature(
         id = "buildkit.android.feature",
         ref = "android-feature",
-        style = "fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000",
+        style = "fill:#FFD6A5,stroke:#000,stroke-width:2px,color:#000"
     ),
     AndroidLibrary(
         id = "buildkit.android.library",
         ref = "android-library",
-        style = "fill:#9BF6FF,stroke:#000,stroke-width:2px,color:#000",
+        style = "fill:#9BF6FF,stroke:#000,stroke-width:2px,color:#000"
     ),
     AndroidTest(
         id = "buildkit.android.test",
         ref = "android-test",
-        style = "fill:#A0C4FF,stroke:#000,stroke-width:2px,color:#000",
+        style = "fill:#A0C4FF,stroke:#000,stroke-width:2px,color:#000"
     ),
     Jvm(
         id = "buildkit.jvm.library",
         ref = "jvm-library",
-        style = "fill:#BDB2FF,stroke:#000,stroke-width:2px,color:#000",
+        style = "fill:#BDB2FF,stroke:#000,stroke-width:2px,color:#000"
     ),
     Unknown(
         id = "?",
         ref = "unknown",
-        style = "fill:#FFADAD,stroke:#000,stroke-width:2px,color:#000",
-    ),
+        style = "fill:#FFADAD,stroke:#000,stroke-width:2px,color:#000"
+    )
 }
 
 internal fun Project.configureGraphTasks() {
@@ -172,7 +176,9 @@ private abstract class GraphDumpTask : DefaultTask() {
 
     private fun mermaid() = buildString {
         val dependencies: Set<Dependency> = dependencies.get()
-            .flatMapTo(mutableSetOf()) { (project, entries) -> entries.map { it.toDependency(project) } }
+            .flatMapTo(mutableSetOf()) { (project, entries) ->
+                entries.map { it.toDependency(project) }
+            }
         // FrontMatter configuration (not supported yet on GitHub.com)
         appendLine(
             // language=YAML
@@ -183,14 +189,15 @@ private abstract class GraphDumpTask : DefaultTask() {
               elk:
                 nodePlacementStrategy: SIMPLE
             ---
-            """.trimIndent(),
+            """.trimIndent()
         )
         // Graph declaration
         appendLine("graph TB")
         // Nodes and subgraphs
         val (rootProjects, nestedProjects) = dependencies
             .map { listOf(it.project, it.dependency) }.flatten().toSet()
-            .plus(projectPath.get()) // Special case when this specific module has no other dependency
+            // Special case when this specific module has no other dependency
+            .plus(projectPath.get())
             .groupBy { it.substringBeforeLast(":") }
             .entries.partition { it.key.isEmpty() }
 
@@ -211,8 +218,8 @@ private abstract class GraphDumpTask : DefaultTask() {
                             toGroup == group && dep.project.substringBeforeLast(":") != group
                         }.count()
                     },
-                    { -it.value.size },
-                ),
+                    { -it.value.size }
+                )
             ).forEach { (group, projects) ->
                 val indent = if (outerGroup.isNotEmpty()) 4 else 2
                 appendLine(" ".repeat(indent) + "subgraph $group")
@@ -246,14 +253,14 @@ private abstract class GraphDumpTask : DefaultTask() {
             "application" to PluginType.AndroidApplication,
             "feature" to PluginType.AndroidFeature,
             "library" to PluginType.AndroidLibrary,
-            "jvm" to PluginType.Jvm,
+            "jvm" to PluginType.Jvm
         ).forEach { (name, type) ->
             appendLine(name.alias(indent = 2, type))
         }
         appendLine()
         listOf(
             Dependency("application", "implementation", "feature"),
-            Dependency("library", "api", "jvm"),
+            Dependency("library", "api", "jvm")
         ).forEach {
             appendLine(it.link(indent = 2))
         }
@@ -281,7 +288,7 @@ private abstract class GraphDumpTask : DefaultTask() {
                 "api" -> "-->"
                 "implementation" -> "-.->"
                 else -> "-.->|$configuration|"
-            },
+            }
         )
         append(" ").append(dependency)
     }
@@ -320,7 +327,7 @@ private abstract class GraphUpdateTask : DefaultTask() {
 
                 <!--region graph--> <!--endregion-->
 
-                """.trimIndent(),
+                """.trimIndent()
             )
         }
         val mermaid = input.get().asFile.readText().trimTrailingNewLines()

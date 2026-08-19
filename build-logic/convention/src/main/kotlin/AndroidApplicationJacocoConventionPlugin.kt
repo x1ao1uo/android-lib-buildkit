@@ -27,9 +27,10 @@ class AndroidApplicationJacocoConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             apply<JacocoPlugin>()
+            val androidComponents = extensions.getByType<ApplicationAndroidComponentsExtension>()
             configureJacoco(
                 commonExtension = extensions.getByType<ApplicationExtension>(),
-                androidComponentsExtension = extensions.getByType<ApplicationAndroidComponentsExtension>(),
+                androidComponentsExtension = androidComponents
             )
         }
     }

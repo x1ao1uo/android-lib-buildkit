@@ -38,13 +38,13 @@ abstract class AndroidLibraryConventionPlugin : Plugin<Project> {
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
-                val targetSdkVersion = findVersionOrDefault("targetSdk", 36)
+                val targetSdkVersion = findVersionOrDefault("targetSdk", 37)
                 testOptions.targetSdk = targetSdkVersion
                 lint.targetSdk = targetSdkVersion
                 testOptions.unitTests.all { test ->
                     test.jvmArgs(
                         "--enable-native-access=ALL-UNNAMED",
-                        "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED",
+                        "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED"
                     )
                 }
                 // Consumers may provide Robolectric resource overrides (e.g. shadows for SDK

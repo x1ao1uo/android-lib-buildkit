@@ -31,11 +31,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 /**
  * Configure base Kotlin with Android options
  */
-internal fun Project.configureKotlinAndroid(
-    commonExtension: CommonExtension,
-) {
+internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
     commonExtension.apply {
-        compileSdk = findVersionOrDefault("compileSdk", 36)
+        compileSdk = findVersionOrDefault("compileSdk", 37)
 
         defaultConfig.apply {
             minSdk = findVersionOrDefault("minSdk", 23)
@@ -93,14 +91,14 @@ private inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() {
             is KotlinJvmProjectExtension -> compilerOptions
             else -> TODO("Unsupported project extension $this ${T::class}")
         }.apply {
-        jvmTarget = JvmTarget.JVM_17
-        allWarningsAsErrors = warningsAsErrors
-        freeCompilerArgs.add(
-            // Enable experimental coroutines APIs, including Flow
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-        )
-        freeCompilerArgs.add(
-            /**
+            jvmTarget = JvmTarget.JVM_17
+            allWarningsAsErrors = warningsAsErrors
+            freeCompilerArgs.add(
+                // Enable experimental coroutines APIs, including Flow
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+            )
+            freeCompilerArgs.add(
+            /*
              * Remove this args after Phase 3.
              * https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-consistent-copy-visibility/#deprecation-timeline
              *
@@ -111,8 +109,8 @@ private inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() {
              * The binary signature changes. The error on the declaration is no longer reported.
              * '-Xconsistent-data-class-copy-visibility' compiler flag and ConsistentCopyVisibility annotation are now unnecessary.
              */
-            "-Xconsistent-data-class-copy-visibility",
-        )
-    }
+                "-Xconsistent-data-class-copy-visibility"
+            )
+        }
     }
 }

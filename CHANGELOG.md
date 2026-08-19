@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- GitHub Actions CI（`.github/workflows/ci.yml`）：supply-chain job 做 Gradle wrapper 校验，build job 跑 `./gradlew build`（含 spotlessCheck、lint、单元测试）并上传构建报告。
 - 从 [android/nowinandroid](https://github.com/android/nowinandroid)（Apache-2.0）抽取构建/质量工具链，建成独立可构建的 Gradle 工程：build-logic convention plugins（插件 id 前缀 `buildkit.*`）、`:lint` 自定义 Lint 检查（`BuildkitIssueRegistry`）、`:ui-test-hilt-manifest`（`HiltComponentActivity`）、spotless 版权头配置，以及仅供参考、未接入构建的 `benchmarks/` 源码。
 - `buildkit.android.application.firebase` convention 插件：仅当模块存在 `google-services.json` 时 apply `com.google.gms.google-services`，依赖 Firebase BoM + Performance + Crashlytics（不含 analytics），并默认关闭 Crashlytics mapping 文件上传。
 - `HttpsUrlValueSource`：通用 Gradle `ValueSource`，校验 URL 必须为 HTTPS（可通过 `allowedHttpUrl` 放行单个例外）。
@@ -22,6 +23,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Library 模块 unit tests 增加 `--enable-native-access=ALL-UNNAMED` 与 `--add-exports=java.base/jdk.internal.access=ALL-UNNAMED` jvmArgs。
 
 ### Changed
+
+- 版本基线对齐生态统一基线：AGP 9.0.0 → 9.3.1（androidTools 32.0.0 → 32.3.1 联动）、Kotlin 2.3.0 → 2.4.10、KSP 2.3.4 → 2.3.11、Hilt 2.59 → 2.60.1、Spotless 8.3.0 → 8.10.0、ktlint 1.4.0 → 1.8.0；Gradle wrapper 9.4.0 → 9.7.0。
+- Compose BOM 从 alpha 通道（`androidx.compose:compose-bom-alpha:2025.09.01`）切换到稳定通道 `androidx.compose:compose-bom:2026.08.00`。
+- 内置缺省 SDK 从 36 升到 37（`compileSdk` 与 application/library 的 `targetSdk` 缺省值；`minSdk` 缺省 23 不变），消费方 catalog 的 `[versions]` 覆盖机制不变。
+
+### Removed
+
+- 删除未接入构建的 `benchmarks/` 残留目录（`settings.gradle.kts` 从未 include，且引用了 catalog 中不存在的 baselineprofile 插件）。
 
 - Java 编译目标从 11 升级到 17（`sourceCompatibility` / `targetCompatibility` / `JvmTarget`，含 JVM library 约定）。
 - Room 升级到 3.0.1 线：插件 id `androidx.room3`，依赖改为 `api(room3-runtime)` + `ksp(room3-compiler)`，移除 `room-ktx`。
