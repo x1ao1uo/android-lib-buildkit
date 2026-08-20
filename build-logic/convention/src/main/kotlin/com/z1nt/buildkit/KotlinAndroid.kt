@@ -36,7 +36,7 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
         compileSdk = findVersionOrDefault("compileSdk", 37)
 
         defaultConfig.apply {
-            minSdk = findVersionOrDefault("minSdk", 23)
+            minSdk = findVersionOrDefault("minSdk", 24)
         }
 
         compileOptions.apply {

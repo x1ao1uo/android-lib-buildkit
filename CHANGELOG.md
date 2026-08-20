@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- 对齐生态统一基线：Gradle wrapper 9.7.0 → 9.7.1（新增 `distributionSha256Sum=acd53f1edaf02f1a8ff99879f8a34b302661a057d9b063ae9e35b552f804d20a`）；CI build job runner 由 `ubuntu-latest` 改为 `self-hosted`（与 `settings.gradle.kts` 本地 `pluginManagement.includeBuild("build-logic")` 一致 — 与 `android-lib-photo-picker` / `android-lib-photo-viewer` / `android-lib-updater` 同基线），JDK 25 不变；`buildkit.android.library` / `buildkit.android.application` 约定的 `minSdk` 缺省值 23 → 24（消费方覆盖机制不变，仍以消费方 `libs.versions.toml` 的 `[versions]` 段为准）。
 - CI 统一 JDK 25（与消费方 android-xuandian2 的 `buildkit.jvmToolchain=25` 基线一致）；README 约定插件缺省值表更正为 compileSdk 37 / minSdk 23 / targetSdk 37（与代码 `findVersionOrDefault` 实际值一致）。
 
 ### Added
