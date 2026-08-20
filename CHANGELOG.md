@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- CI 统一 JDK 25（与消费方 android-xuandian2 的 `buildkit.jvmToolchain=25` 基线一致）；README 约定插件缺省值表更正为 compileSdk 37 / minSdk 23 / targetSdk 37（与代码 `findVersionOrDefault` 实际值一致）。
+
 ### Added
 
 - GitHub Actions CI（`.github/workflows/ci.yml`）：supply-chain job 做 Gradle wrapper 校验，build job 跑 `./gradlew build`（含 spotlessCheck、lint、单元测试）并上传构建报告。

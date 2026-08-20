@@ -44,9 +44,9 @@ Convention 插件从消费方 `gradle/libs.versions.toml` 的 `[versions]` 段�
 
 | 键 | 用途 | 缺省值 |
 |---|---|---|
-| `compileSdk` | `compileSdk` | 36 |
+| `compileSdk` | `compileSdk` | 37 |
 | `minSdk` | `defaultConfig.minSdk` | 23 |
-| `targetSdk` | `defaultConfig.targetSdk`、`lint.targetSdk`、`testOptions.targetSdk` | 36 |
+| `targetSdk` | `defaultConfig.targetSdk`、`lint.targetSdk`、`testOptions.targetSdk` | 37 |
 
 `buildkit.android.application.firebase` 额外要求消费方 catalog 提供 `firebase-bom`、`firebase-performance`、`firebase-crashlytics` 三个 library 键，且 `com.google.gms.google-services` / `com.google.firebase.firebase-perf` / `com.google.firebase.crashlytics` 插件在消费方 classpath 可用（`com.google.gms.google-services` 仅当模块存在 `google-services.json` 时才会被 apply）。
 
