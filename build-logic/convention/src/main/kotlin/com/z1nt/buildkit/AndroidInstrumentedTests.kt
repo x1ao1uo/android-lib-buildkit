@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// AndroidInstrumentedTests：复用 NIA 的"无 androidTest 源码目录时禁用 instrumented test"优化，
+// 避免空模块被无意义地编译/打包/安装。
+
 package com.z1nt.buildkit
 
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
@@ -26,6 +29,9 @@ import org.gradle.api.Project
  * > Starting 0 tests on AVD
  *
  * Note: this could be improved by checking other potential sourceSets based on buildTypes and flavors.
+ *
+ * 仅当模块下存在 src/androidTest 目录时才启用 instrumented test，避免空模块产出无意义的
+ * "Starting 0 tests on AVD" 报告。后续可考虑按 buildType/flavor 进一步细分。
  */
 internal fun LibraryAndroidComponentsExtension.disableUnnecessaryAndroidTests(project: Project) =
     beforeVariants {

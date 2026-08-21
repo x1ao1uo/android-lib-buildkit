@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// JvmLibraryConventionPlugin：纯 JVM 库模块的约定插件。
+// 复用 Kotlin/JVM + buildkit Lint + Spotless，并提供 kotlin.test。
+
 import com.z1nt.buildkit.configureKotlinJvm
 import com.z1nt.buildkit.configureSpotlessForJvm
 import com.z1nt.buildkit.libs

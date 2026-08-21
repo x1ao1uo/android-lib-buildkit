@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// Badging：通过 aapt2 dump badging 生成与校验应用 badging 信息（图标、版本等元数据）。
+// 为每个 variant 注册 generate / update / check 三个任务，用于 CI 校验 manifest 元数据未意外变化。
+
 package com.z1nt.buildkit
 
 import com.android.build.api.artifact.SingleArtifact
@@ -40,6 +43,7 @@ import org.gradle.kotlin.dsl.register
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.process.ExecOperations
 
+// 调用 aapt2 dump badging 生成元数据文件
 @CacheableTask
 abstract class GenerateBadgingTask : DefaultTask() {
 
@@ -59,6 +63,7 @@ abstract class GenerateBadgingTask : DefaultTask() {
 
     @TaskAction
     fun taskAction() {
+        // 调用 aapt2 dump badging 把 APK 的元数据写入输出文件
         execOperations.exec {
             commandLine(
                 aapt2Executable.get().asFile.absolutePath,
@@ -71,12 +76,14 @@ abstract class GenerateBadgingTask : DefaultTask() {
     }
 }
 
+// 比较生成的 badging 与 golden 文件，发现漂移即断言失败
 @CacheableTask
 abstract class CheckBadgingTask : DefaultTask() {
 
     // In order for the task to be up-to-date when the inputs have not changed,
     // the task must declare an output, even if it's not used. Tasks with no
     // output are always run regardless of whether the inputs changed
+    // 必须声明 output 才能让 Gradle 正确做 up-to-date 检查
     @get:OutputDirectory
     abstract val output: DirectoryProperty
 
@@ -104,10 +111,12 @@ abstract class CheckBadgingTask : DefaultTask() {
     }
 }
 
+// Locale 无关的首字母大写工具方法
 private fun String.capitalized() = replaceFirstChar {
     if (it.isLowerCase()) it.titlecase() else it.toString()
 }
 
+// 在 Project 上注册一组 badging 相关任务
 fun Project.configureBadgingTasks(componentsExtension: ApplicationAndroidComponentsExtension) {
     // Registers a callback to be called, when a new variant is configured
     componentsExtension.onVariants { variant ->
@@ -123,12 +132,14 @@ fun Project.configureBadgingTasks(componentsExtension: ApplicationAndroidCompone
                 )
             }
 
+        // 把最新生成的 badging 复制回项目根目录，便于提交为 golden
         val updateBadgingTaskName = "update${capitalizedVariantName}Badging"
         tasks.register<Copy>(updateBadgingTaskName) {
             from(generateBadging.map(GenerateBadgingTask::badging))
             into(project.layout.projectDirectory)
         }
 
+        // 比对 golden 与新生成 badging，发现差异即失败
         val checkBadgingTaskName = "check${capitalizedVariantName}Badging"
         tasks.register<CheckBadgingTask>(checkBadgingTaskName) {
             goldenBadging = project.layout.projectDirectory.file("${variant.name}-badging.txt")

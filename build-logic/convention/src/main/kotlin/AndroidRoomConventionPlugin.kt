@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// AndroidRoomConventionPlugin：Room 数据库的约定插件。
+// 启用 androidx.room3 + KSP，输出 Kotlin schema（generateKotlin=true），并把 schemas 目录指向模块内。
+
 import androidx.room3.gradle.RoomExtension
 import com.google.devtools.ksp.gradle.KspExtension
 import com.z1nt.buildkit.libs
@@ -31,6 +34,7 @@ class AndroidRoomConventionPlugin : Plugin<Project> {
             apply(plugin = "com.google.devtools.ksp")
 
             extensions.configure<KspExtension> {
+                // 生成 Kotlin schema 而不是 Java schema
                 arg("room.generateKotlin", "true")
             }
 
@@ -38,11 +42,13 @@ class AndroidRoomConventionPlugin : Plugin<Project> {
                 // The schemas directory contains a schema file for each version of the Room database.
                 // This is required to enable Room auto migrations.
                 // See https://developer.android.com/reference/kotlin/androidx/room/AutoMigration.
+                // 每个版本的数据库 schema 都会落到该目录，用于支持 auto migration
                 schemaDirectory("$projectDir/schemas")
             }
 
             dependencies {
                 // api: consumers call RoomDatabase APIs (withWriteTransaction, clearAllTables).
+                // 用 api 暴露 RoomDatabase API，使消费方能直接调用事务 API
                 "api"(libs.findLibrary("room-runtime").get())
                 "ksp"(libs.findLibrary("room-compiler").get())
             }

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// AndroidLintConventionPlugin：为任意 Android 模块（application / library）或纯 Lint 模块统一应用 buildkit 的 Lint 配置。
+
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.dsl.Lint
@@ -25,6 +27,7 @@ import org.gradle.kotlin.dsl.configure
 class AndroidLintConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
+            // 根据宿主已应用的具体 Android 插件类型选用对应的 Extension
             when {
                 pluginManager.hasPlugin("com.android.application") ->
                     configure<ApplicationExtension> { lint(Lint::configure) }
@@ -33,6 +36,7 @@ class AndroidLintConventionPlugin : Plugin<Project> {
                     configure<LibraryExtension> { lint(Lint::configure) }
 
                 else -> {
+                    // 兜底：直接应用 com.android.lint 插件
                     apply(plugin = "com.android.lint")
                     configure<Lint>(Lint::configure)
                 }
@@ -41,9 +45,11 @@ class AndroidLintConventionPlugin : Plugin<Project> {
     }
 }
 
+// buildkit 统一的 Lint 基线配置
 private fun Lint.configure() {
-    xmlReport = true
-    sarifReport = false
-    checkDependencies = true
+    xmlReport = true  // 输出 XML 报告
+    sarifReport = false  // 暂不输出 SARIF
+    checkDependencies = true  // 同时检查依赖项
+    // GradleDependency 在版本目录模式下经常误报，按 buildkit 基线禁用
     disable += "GradleDependency"
 }

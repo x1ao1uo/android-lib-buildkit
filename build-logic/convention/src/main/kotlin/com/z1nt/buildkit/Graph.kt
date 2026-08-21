@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// Graph：生成 Mermaid 模块依赖图的任务。
+// 通过 graphDump 任务输出 mermaid 文件，再由 graphUpdate 任务嵌入到对应模块的 README.md。
+
 package com.z1nt.buildkit
 
 import com.android.utils.associateWithNotNull
@@ -46,26 +49,35 @@ import org.gradle.kotlin.dsl.withType
  * - [Graph.invoke] is always executed during Gradle's Configuration phase (but takes in general less than 1 ms for a project).
  *
  * The resulting graphs can be configured with `graph.ignoredProjects` and `graph.supportedConfigurations` properties.
+ *
+ * 通过递归扫描 project dependency，产出 mermaid 文本与图例；
+ * graph.ignoredProjects 可排除指定模块，graph.supportedConfigurations 可限定要展示的 configuration。
  */
 private class Graph(
     private val root: Project,
+    // project -> (configuration, dependentProject) 集合
     private val dependencies: MutableMap<Project, Set<Pair<Configuration, Project>>> =
         mutableMapOf(),
     private val plugins: MutableMap<Project, PluginType> = mutableMapOf(),
     private val seen: MutableSet<String> = mutableSetOf()
 ) {
 
+    // 不参与依赖图绘制的模块列表
     private val ignoredProjects = root.providers.gradleProperty("graph.ignoredProjects")
         .map { it.split(",").toSet() }
         .orElse(emptySet())
+    // 仅展示以下 configuration 上的依赖
     private val supportedConfigurations =
         root.providers.gradleProperty("graph.supportedConfigurations")
             .map { it.split(",").toSet() }
             .orElse(setOf("api", "implementation", "baselineProfile", "testedApks"))
 
+    // 递归扫描依赖图
     operator fun invoke(project: Project = root): Graph {
+        // 已访问过的 project 直接跳过，避免环
         if (project.path in seen) return this
         seen += project.path
+        // 按声明顺序找到第一个匹配的插件类型，未知则归类为 Unknown
         plugins.putIfAbsent(
             project,
             PluginType.entries.firstOrNull { project.pluginManager.hasPlugin(it.id) } ?: Unknown
@@ -86,6 +98,7 @@ private class Graph(
         return this
     }
 
+    // 把内部结构转换为 (project path) -> (configuration name, dependency path) 集合
     fun dependencies(): Map<String, Set<Pair<String, String>>> = dependencies
         .mapKeys { it.key.path }
         .mapValues { it.value.mapTo(mutableSetOf()) { (c, p) -> c.name to p.path } }
@@ -95,6 +108,8 @@ private class Graph(
 
 /**
  * Declaration order is important, as only the first match will be retained.
+ *
+ * 插件类型枚举；声明顺序很重要，只有首个匹配的会被保留。
  */
 internal enum class PluginType(val id: String, val ref: String, val style: String) {
     AndroidApplication(

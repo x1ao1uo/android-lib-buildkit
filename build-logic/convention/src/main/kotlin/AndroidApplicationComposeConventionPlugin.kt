@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// AndroidApplicationComposeConventionPlugin：application 模块的 Compose 约定。
+// 应用 AGP application + Kotlin Compose 插件，并复用统一的 Compose 配置入口。
+
 import com.android.build.api.dsl.ApplicationExtension
 import com.z1nt.buildkit.configureAndroidCompose
 import org.gradle.api.Plugin

@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// DesignSystemDetector：buildkit 的 design system 统一性 Lint 检查。
+// 检测代码中是否直接使用了 Compose Material API 而未走 buildkit 自身的 design system 包装。
+
 package com.z1nt.buildkit.lint.designsystem
 
 import com.android.tools.lint.client.api.UElementHandler
@@ -42,12 +45,14 @@ class DesignSystemDetector : Detector(), Detector.UastScanner {
     override fun createUastHandler(context: JavaContext): UElementHandler =
         object : UElementHandler() {
             override fun visitCallExpression(node: UCallExpression) {
+                // 函数调用：把 Material 的 composable 名称映射到 buildkit 等价物
                 val name = node.methodName ?: return
                 val preferredName = METHOD_NAMES[name] ?: return
                 reportIssue(context, node, name, preferredName)
             }
 
             override fun visitQualifiedReferenceExpression(node: UQualifiedReferenceExpression) {
+                // 限定引用：例如 Icons.Default 形式
                 val name = node.receiver.asRenderString()
                 val preferredName = RECEIVER_NAMES[name] ?: return
                 reportIssue(context, node, name, preferredName)
@@ -74,6 +79,8 @@ class DesignSystemDetector : Detector(), Detector.UastScanner {
         // Unfortunately :lint is a Java module and thus can't depend on the :core-designsystem
         // Android module, so we can't use composable function references (eg. ::Button.name)
         // instead of hardcoded names.
+        // :lint 是纯 Java 模块，无法依赖 :core-designsystem 的 composable 引用，
+        // 只能维护硬编码的名称映射表
         val METHOD_NAMES = mapOf(
             "MaterialTheme" to "BuildkitTheme",
             "Button" to "BuildkitButton",
@@ -100,6 +107,7 @@ class DesignSystemDetector : Detector(), Detector.UastScanner {
             "Icons" to "BuildkitIcons",
         )
 
+        // 触发 Lint 警告的统一入口
         fun reportIssue(
             context: JavaContext,
             node: UElement,

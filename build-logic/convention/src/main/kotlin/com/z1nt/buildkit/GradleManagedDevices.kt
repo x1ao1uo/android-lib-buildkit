@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// GradleManagedDevices：为 buildkit 注册一组托管虚拟设备（Pixel 4/6/C），并暴露一个 ci 设备组供 CI 使用。
+
 package com.z1nt.buildkit
 
 import com.android.build.api.dsl.CommonExtension
@@ -23,6 +25,13 @@ import org.gradle.kotlin.dsl.invoke
 
 /**
  * Configure project for Gradle managed devices
+ *
+ * 注册的设备：
+ * - Pixel 4 (API 30, aosp-atd)
+ * - Pixel 6 (API 31, aosp)
+ * - Pixel C (API 30, aosp-atd)
+ *
+ * 其中 ci 设备组仅包含 Pixel 4 + Pixel C，用于快速 CI smoke 测试。
  */
 internal fun configureGradleManagedDevices(commonExtension: CommonExtension) {
     val pixel4 = DeviceConfig("Pixel 4", 30, "aosp-atd")
@@ -36,6 +45,7 @@ internal fun configureGradleManagedDevices(commonExtension: CommonExtension) {
         @Suppress("UnstableApiUsage")
         managedDevices {
             allDevices {
+                // 全量注册 3 台设备
                 allDevices.forEach { deviceConfig ->
                     maybeCreate(deviceConfig.taskName, ManagedVirtualDevice::class.java).apply {
                         device = deviceConfig.device
@@ -45,6 +55,7 @@ internal fun configureGradleManagedDevices(commonExtension: CommonExtension) {
                 }
             }
             groups {
+                // CI 用的精简设备组
                 maybeCreate("ci").apply {
                     ciDevices.forEach { deviceConfig ->
                         targetDevices.add(localDevices[deviceConfig.taskName])
@@ -55,6 +66,7 @@ internal fun configureGradleManagedDevices(commonExtension: CommonExtension) {
     }
 }
 
+// 设备配置数据类，taskName 由 device + api + systemImageSource 拼接得到
 private data class DeviceConfig(
     val device: String,
     val apiLevel: Int,

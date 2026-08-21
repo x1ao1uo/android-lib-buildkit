@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// AndroidApplicationJacocoConventionPlugin：在 application 模块上启用 JaCoCo 覆盖率任务。
+
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.z1nt.buildkit.configureJacoco

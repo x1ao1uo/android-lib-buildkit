@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// BuildkitIssueRegistry：buildkit 自定义 Lint IssueRegistry，集中暴露给 Lint。
+// 当前包含 DesignSystem 强制走 design system 的检查与 TestMethodName 命名规范检查。
+
 package com.z1nt.buildkit.lint
 
 import com.android.tools.lint.client.api.IssueRegistry
@@ -24,8 +27,11 @@ import com.z1nt.buildkit.lint.designsystem.DesignSystemDetector
 class BuildkitIssueRegistry : IssueRegistry() {
 
     override val issues = listOf(
+        // Design system 统一性检查
         DesignSystemDetector.ISSUE,
+        // 测试方法命名格式（androidTest 下 given_when_then）
         TestMethodNameDetector.FORMAT,
+        // 测试方法不应有 test 前缀
         TestMethodNameDetector.PREFIX,
     )
 

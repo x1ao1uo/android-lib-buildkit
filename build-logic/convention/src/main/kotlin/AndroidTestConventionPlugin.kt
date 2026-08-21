@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// AndroidTestConventionPlugin：com.android.test 模块（库型测试模块）的约定配置。
+// 复用 Kotlin/Android 配置 + managed devices，固定 targetSdk=36。
+
 import com.android.build.api.dsl.TestExtension
 import com.z1nt.buildkit.configureGradleManagedDevices
 import com.z1nt.buildkit.configureKotlinAndroid
@@ -29,6 +32,7 @@ class AndroidTestConventionPlugin : Plugin<Project> {
 
             extensions.configure<TestExtension> {
                 configureKotlinAndroid(this)
+                // 测试模块固定 targetSdk=36，与运行时一致
                 defaultConfig.targetSdk = 36
                 configureGradleManagedDevices(this)
             }

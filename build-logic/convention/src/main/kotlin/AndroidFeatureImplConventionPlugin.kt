@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// AndroidFeatureImplConventionPlugin：feature 实现层模块的约定插件。
+// 依赖 core:ui 与 core:designsystem，并注入 lifecycle / hilt / navigation3 等常用运行时依赖。
+
 import com.android.build.api.dsl.LibraryExtension
 import com.z1nt.buildkit.configureGradleManagedDevices
 import com.z1nt.buildkit.libs
@@ -26,6 +29,7 @@ import org.gradle.kotlin.dsl.dependencies
 class AndroidFeatureImplConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
+            // 复用基础 library + Hilt 插件
             apply(plugin = "buildkit.android.library")
             apply(plugin = "buildkit.hilt")
 
@@ -35,6 +39,7 @@ class AndroidFeatureImplConventionPlugin : Plugin<Project> {
             }
 
             dependencies {
+                // 复用 core 模块的 UI 与 design system 能力
                 "implementation"(project(":core:ui"))
                 "implementation"(project(":core:designsystem"))
 

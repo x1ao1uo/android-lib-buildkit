@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// AndroidLibraryComposeConventionPlugin：library 模块的 Compose 约定。
+// 应用 AGP library + Kotlin Compose 插件，并复用统一的 Compose 配置入口。
+
 import com.android.build.api.dsl.LibraryExtension
 import com.z1nt.buildkit.configureAndroidCompose
 import org.gradle.api.Plugin

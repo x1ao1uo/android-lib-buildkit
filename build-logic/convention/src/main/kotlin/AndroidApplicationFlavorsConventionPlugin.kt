@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// AndroidApplicationFlavorsConventionPlugin：在 application 模块上注册 buildkit 的标准 flavor（demo / prod）。
+
 import com.android.build.api.dsl.ApplicationExtension
 import com.z1nt.buildkit.configureFlavors
 import org.gradle.api.Plugin
@@ -24,6 +26,7 @@ class AndroidApplicationFlavorsConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             extensions.configure<ApplicationExtension> {
+                // 注册 contentType 维度下的 demo / prod flavor
                 configureFlavors(this)
             }
         }

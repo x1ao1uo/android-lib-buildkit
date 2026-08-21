@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+// TestMethodNameDetector：buildkit 自定义 Lint 规则，统一测试方法的命名风格。
+// - 检测并提示移除多余的 test 前缀（PREFIX）
+// - 检测 androidTest 下是否采用 given_when_then / when_then 命名格式（FORMAT）
+
 package com.z1nt.buildkit.lint
 
 import com.android.tools.lint.detector.api.AnnotationInfo
@@ -52,6 +56,7 @@ class TestMethodNameDetector : Detector(), SourceCodeScanner {
     ) {
         // Since lint 32.x, `referenced` is a UMethod (e.g. KotlinUMethod)
         // rather than a PsiMethod for Kotlin sources.
+        // lint 32.x 后，Kotlin 源中 `referenced` 是 UMethod 而非 PsiMethod
         val method = usageInfo.referenced as? PsiMethod
             ?: (usageInfo.referenced as? UMethod)?.javaPsi
             ?: return
@@ -60,8 +65,10 @@ class TestMethodNameDetector : Detector(), SourceCodeScanner {
         method.detectFormat(context, usageInfo)
     }
 
+    // 通过源码路径是否包含 "androidTest" 段判断是否在 instrumented 测试
     private fun JavaContext.isAndroidTest() = Path("androidTest") in file.toPath()
 
+    // 提示移除多余的 test 前缀（unit test）
     private fun PsiMethod.detectPrefix(
         context: JavaContext,
         usageInfo: AnnotationUsageInfo,
@@ -81,6 +88,7 @@ class TestMethodNameDetector : Detector(), SourceCodeScanner {
         )
     }
 
+    // androidTest 下校验命名是否符合 given_when_then / when_then 格式
     private fun PsiMethod.detectFormat(
         context: JavaContext,
         usageInfo: AnnotationUsageInfo,
@@ -97,6 +105,7 @@ class TestMethodNameDetector : Detector(), SourceCodeScanner {
 
     companion object {
 
+        // 创建 Lint Issue 的辅助函数
         private fun issue(
             id: String,
             briefDescription: String,
@@ -114,6 +123,7 @@ class TestMethodNameDetector : Detector(), SourceCodeScanner {
             ),
         )
 
+        // 测试方法不应以 test 开头
         @JvmField
         val PREFIX: Issue = issue(
             id = "TestMethodPrefix",
@@ -121,6 +131,7 @@ class TestMethodNameDetector : Detector(), SourceCodeScanner {
             explanation = "Test method should not start with `test`.",
         )
 
+        // androidTest 方法应遵循 given_when_then 或 when_then 格式
         @JvmField
         val FORMAT: Issue = issue(
             id = "TestMethodFormat",

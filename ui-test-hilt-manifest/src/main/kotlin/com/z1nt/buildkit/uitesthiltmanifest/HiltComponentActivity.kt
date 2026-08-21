@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// HiltComponentActivity：测试专用、标注了 @AndroidEntryPoint 的空 ComponentActivity。
+// 作为 Robolectric / Compose UI 测试的宿主，规避 https://github.com/google/dagger/issues/3394 的限制。
+
 package com.z1nt.buildkit.uitesthiltmanifest
 
 import androidx.activity.ComponentActivity
