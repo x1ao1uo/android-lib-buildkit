@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// Spotless：buildkit 内部的代码格式化与版权头校验逻辑。
-// 按 root / Android 子项目 / JVM 子项目三种形态分别注册 Spotless 任务。
-
 package com.z1nt.buildkit
 
 import com.diffplug.gradle.spotless.SpotlessExtension

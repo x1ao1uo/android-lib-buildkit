@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// BuildkitFlavor：buildkit 标准的 flavor 维度与枚举定义。
-// 仅一个维度 contentType，两个 flavor：demo（带 .demo 后缀，便于和正式版并存）与 prod。
-
 package com.z1nt.buildkit
 
 import com.android.build.api.dsl.ApplicationExtension

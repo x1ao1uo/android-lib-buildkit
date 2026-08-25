@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// AndroidInstrumentedTests：复用 NIA 的"无 androidTest 源码目录时禁用 instrumented test"优化，
-// 避免空模块被无意义地编译/打包/安装。
-
 package com.z1nt.buildkit
 
 import com.android.build.api.variant.LibraryAndroidComponentsExtension

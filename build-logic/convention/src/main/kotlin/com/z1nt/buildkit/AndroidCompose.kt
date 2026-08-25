@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// AndroidCompose：为 Compose 模块统一打开 buildFeatures.compose、引入 BOM 与 Tooling 依赖，
-// 并按 Gradle 属性开启 Compose Compiler Metrics / Reports / stability 配置。
-
 package com.z1nt.buildkit
 
 import com.android.build.api.dsl.CommonExtension

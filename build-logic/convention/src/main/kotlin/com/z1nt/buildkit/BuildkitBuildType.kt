@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// BuildkitBuildType：buildkit 内部的 build type 枚举，与 :app / :benchmarks 共用。
-// DEBUG 带 .debug 后缀，可与正式版并存；RELEASE 无后缀。
-
 package com.z1nt.buildkit
 
 /**

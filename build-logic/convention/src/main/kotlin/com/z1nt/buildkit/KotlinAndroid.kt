@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// KotlinAndroid：buildkit 内部共享的 Kotlin/JVM 编译器与 Android 编译选项配置入口。
-// 为 Android 模块与非 Android JVM 模块统一 jvmTarget=17、warning-as-errors、coreLibraryDesugaring 等基线。
-
 package com.z1nt.buildkit
 
 import com.android.build.api.dsl.CommonExtension
@@ -125,7 +122,7 @@ private inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() {
              * The binary signature changes. The error on the declaration is no longer reported.
              * '-Xconsistent-data-class-copy-visibility' compiler flag and ConsistentCopyVisibility annotation are now unnecessary.
              */
-            // Kotlin 2.x 期间临时使用，强制 data class 的 copy() 与构造器可见性一致；Phase 3 之后可移除
+                // Kotlin 2.x 期间临时使用，强制 data class 的 copy() 与构造器可见性一致；Phase 3 之后可移除
                 "-Xconsistent-data-class-copy-visibility"
             )
         }

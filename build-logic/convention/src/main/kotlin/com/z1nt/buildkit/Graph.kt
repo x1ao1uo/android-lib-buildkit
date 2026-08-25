@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// Graph：生成 Mermaid 模块依赖图的任务。
-// 通过 graphDump 任务输出 mermaid 文件，再由 graphUpdate 任务嵌入到对应模块的 README.md。
-
 package com.z1nt.buildkit
 
 import com.android.utils.associateWithNotNull
@@ -66,6 +63,7 @@ private class Graph(
     private val ignoredProjects = root.providers.gradleProperty("graph.ignoredProjects")
         .map { it.split(",").toSet() }
         .orElse(emptySet())
+
     // 仅展示以下 configuration 上的依赖
     private val supportedConfigurations =
         root.providers.gradleProperty("graph.supportedConfigurations")

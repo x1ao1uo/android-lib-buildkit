@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// AndroidApplicationFirebaseConventionPlugin：集成 Firebase Performance + Crashlytics。
-// 仅当存在 google-services.json 时才启用 google-services 插件，并默认禁用 Crashlytics mapping 上传。
-
 import com.android.build.api.dsl.ApplicationExtension
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import com.z1nt.buildkit.libs

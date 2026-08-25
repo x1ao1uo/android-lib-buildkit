@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// Jacoco：buildkit 内部的覆盖率任务配置入口。
-// 为每个 variant 生成 `create{variant}CombinedCoverageReport`，合并 unitTest + androidTest 数据。
-
 package com.z1nt.buildkit
 
 import com.android.build.api.artifact.ScopedArtifact

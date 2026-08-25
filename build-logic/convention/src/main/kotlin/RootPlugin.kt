@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-// RootPlugin：apply 在 root project 的插件。
-// - 在开启 Isolated Projects 的工程里跳过跨子项目任务图配置，避免违反 IP 约束；
-// - 其它情况下统一配置任务图与 Spotless 版权头校验。
-
 import com.z1nt.buildkit.configureGraphTasks
 import com.z1nt.buildkit.configureSpotlessForRootProject
 import javax.inject.Inject

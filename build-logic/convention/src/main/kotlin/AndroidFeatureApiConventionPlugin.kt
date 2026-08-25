@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// AndroidFeatureApiConventionPlugin：feature API 层模块的约定插件。
-// 启用 Kotlin Serialization，并通过 api 依赖对外暴露 core:navigation 的接口。
-
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply

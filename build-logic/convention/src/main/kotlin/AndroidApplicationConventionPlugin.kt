@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// AndroidApplicationConventionPlugin：组合 com.android.application + Kotlin/JVM 配置 + Lint + Spotless。
-// 应用到模块后会自动得到 targetSdk、managed devices、apk 打印等统一能力。
-
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.z1nt.buildkit.configureBadgingTasks

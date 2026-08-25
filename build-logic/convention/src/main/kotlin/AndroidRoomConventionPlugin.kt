@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// AndroidRoomConventionPlugin：Room 数据库的约定插件。
-// 启用 androidx.room3 + KSP，输出 Kotlin schema（generateKotlin=true），并把 schemas 目录指向模块内。
-
 import androidx.room3.gradle.RoomExtension
 import com.google.devtools.ksp.gradle.KspExtension
 import com.z1nt.buildkit.libs

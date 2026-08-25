@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// PrintTestApks：为每个带 androidTest 的 variant 注册一个 `${variantName}PrintTestApk` 任务，
-// 任务仅在确实存在 androidTest 源码时打印生成的 APK 路径，便于 CI/本地后续安装与运行。
-
 package com.z1nt.buildkit
 
 import com.android.build.api.artifact.SingleArtifact

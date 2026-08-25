@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// HiltConventionPlugin：buildkit 的 Hilt 依赖注入约定插件。
-// 同时支持纯 JVM 模块和 Android 模块，根据宿主应用的具体插件加载不同的 Hilt 变体。
-
 import com.android.build.gradle.api.AndroidBasePlugin
 import com.z1nt.buildkit.libs
 import org.gradle.api.Plugin

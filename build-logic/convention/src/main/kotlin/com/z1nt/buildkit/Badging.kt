@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// Badging：通过 aapt2 dump badging 生成与校验应用 badging 信息（图标、版本等元数据）。
-// 为每个 variant 注册 generate / update / check 三个任务，用于 CI 校验 manifest 元数据未意外变化。
-
 package com.z1nt.buildkit
 
 import com.android.build.api.artifact.SingleArtifact

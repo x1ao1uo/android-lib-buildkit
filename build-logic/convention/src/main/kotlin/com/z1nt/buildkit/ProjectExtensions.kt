@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// ProjectExtensions：提供给 buildkit 各插件复用的 Project 扩展属性与方法。
-// 主要包括 version catalog 访问与版本号读取辅助。
-
 package com.z1nt.buildkit
 
 import org.gradle.api.Project

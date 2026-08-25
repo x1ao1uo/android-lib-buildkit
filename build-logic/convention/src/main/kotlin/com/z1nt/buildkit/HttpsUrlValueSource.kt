@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// HttpsUrlValueSource：一个 Gradle ValueSource，用于校验某个字符串是否为合法 HTTPS URL。
-// 允许配置一个特殊的"白名单 HTTP URL"（例如内网仓库），用于版本号下载等场景的安全拦截。
-
 package com.z1nt.buildkit
 
 import java.net.URI

@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// AndroidLibraryConventionPlugin：组合 com.android.library + Kotlin/JVM 配置 + Lint + Spotless + 默认依赖。
-// 应用到模块后会自动得到 targetSdk、managed devices、flavor、resource prefix 等统一能力。
-
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.z1nt.buildkit.configureFlavors

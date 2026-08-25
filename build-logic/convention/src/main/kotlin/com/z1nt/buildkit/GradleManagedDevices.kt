@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-// GradleManagedDevices：为 buildkit 注册一组托管虚拟设备（Pixel 4/6/C），并暴露一个 ci 设备组供 CI 使用。
-
 package com.z1nt.buildkit
 
 import com.android.build.api.dsl.CommonExtension

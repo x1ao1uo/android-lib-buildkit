@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// AndroidFeatureImplConventionPlugin：feature 实现层模块的约定插件。
-// 依赖 core:ui 与 core:designsystem，并注入 lifecycle / hilt / navigation3 等常用运行时依赖。
-
 import com.android.build.api.dsl.LibraryExtension
 import com.z1nt.buildkit.configureGradleManagedDevices
 import com.z1nt.buildkit.libs
