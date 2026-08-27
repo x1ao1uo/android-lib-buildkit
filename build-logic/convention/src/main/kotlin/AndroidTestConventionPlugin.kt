@@ -29,8 +29,8 @@ class AndroidTestConventionPlugin : Plugin<Project> {
 
             extensions.configure<TestExtension> {
                 configureKotlinAndroid(this)
-                // 测试模块固定 targetSdk=36，与运行时一致
-                defaultConfig.targetSdk = 36
+                // 测试模块固定 targetSdk=37，与运行时一致
+                defaultConfig.targetSdk = 37
                 configureGradleManagedDevices(this)
             }
         }
