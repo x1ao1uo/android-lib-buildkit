@@ -5,7 +5,6 @@ Android 构建/质量工具链 monorepo：`build-logic` convention plugins（插
 ## 消费方式
 
 - `build-logic` 经 `pluginManagement.includeBuild` 被多个仓库消费（android-lib-photo-picker、android-lib-photo-viewer、android-lib-updater 等以绝对路径指向本仓库的 `build-logic`，见各仓库 `settings.gradle.kts`）。
-- 仅本地 composite build 消费，**不发布到任何远程仓库**；不要添加远程 publishing repository。
 - 消费方 version catalog 的 `[versions]` 段可用 `compileSdk` / `minSdk` / `targetSdk` 覆盖 SDK 级别，键缺失时回退内置缺省值（37 / 24 / 37）；生态基线要求消费方覆盖为 compileSdk=37、targetSdk=37、minSdk=24。
 
 ## 工具链基线
@@ -23,7 +22,4 @@ CI 在 `.github/workflows/ci.yml`：本仓库无外部绝对路径 includeBuild 
 
 ## 提交规范
 
-- Conventional Commits（`feat:` / `fix:` / `build:` / `docs:` / `chore:` 等，破坏性变更加 `!`）。
-- 变更需同步维护 `CHANGELOG.md` 的 `[Unreleased]` 段（Keep a Changelog 格式）。
-- 源码版权头遵循 `spotless/` 模板；新增源码文件必须带版权头（spotlessCheck 强制）。
-- 禁止提交密钥、Token、`local.properties` 与设备标识。
+- `CHANGELOG.md` 采用 Keep a Changelog 格式。
