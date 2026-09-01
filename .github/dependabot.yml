@@ -1,0 +1,40 @@
+# Dependabot — automated dependency updates.
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates
+version: 2
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+      timezone: "Asia/Shanghai"
+    open-pull-requests-limit: 5
+    groups:
+      all-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+    labels: ["deps/gradle", "auto-update"]
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    ignore:
+      # Major Kotlin upgrades need coordinated changes to Compose / KSP.
+      - dependency-name: "org.jetbrains.kotlin*"
+        update-types: ["version-update:semver-major"]
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "04:00"
+      timezone: "Asia/Shanghai"
+    open-pull-requests-limit: 5
+    groups:
+      all-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+    labels: ["deps/github-actions", "auto-update"]
+    commit-message:
+      prefix: "deps"
+      include: "scope"
