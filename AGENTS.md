@@ -14,7 +14,7 @@ Android 构建/质量工具链 monorepo：`build-logic` convention plugins（插
 ## 工具链基线
 
 - Gradle 9.7.1（wrapper 钉死，含 `distributionSha256Sum`）；JDK 17+（`settings.gradle.kts` 有硬性校验）
-- AGP 9.3.1、Kotlin 2.4.10、KSP 2.3.11、ktlint 1.8.0、Spotless 8.10.0
+- AGP 9.5.1、Kotlin 2.4.10、KSP 2.3.11、ktlint 1.8.0、Spotless 8.10.0
 
 ## 验证
 

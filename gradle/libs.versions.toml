@@ -1,6 +1,6 @@
 [versions]
 # AGP and androidTools should be updated together
-androidGradlePlugin = "9.3.2"
+androidGradlePlugin = "9.5.1"
 androidTools = "32.3.2"
 androidDesugarJdkLibs = "2.1.5"
 androidxComposeBom = "2026.08.00"

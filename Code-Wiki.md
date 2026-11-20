@@ -9,7 +9,7 @@ android-lib-buildkit 是一套**面向 Android monorepo 的 Gradle 构建 / 质�
 - **包名空间** 由 `com.google.samples.apps.nowinandroid` 全局替换为 `com.z1nt.buildkit`,Gradle 插件 id 前缀由 `nowinandroid.*` 改为 `buildkit.*`,整体沿用 Apache-2.0 许可 (`LICENSE` / `NOTICE`)。
 - **核心交付物** 是 [`build-logic/convention`](build-logic) 下的 16 个 Convention Plugin,以及 `:lint` 自定义 Lint 检查、`:ui-test-hilt-manifest` 测试 Hilt Activity、`spotless/` 版权头模板。
 - **消费方式** 为 composite build —— 消费方通过 `pluginManagement { includeBuild("build-logic") }` 把本仓库作为复合构建引入,然后在模块里按 id `alias(libs.plugins.buildkit.android.library)` 等方式应用。
-- **技术栈**:Gradle Wrapper 9.7.1(含 `distributionSha256Sum` 校验)、JDK 17+(CI 锁 25)、AGP 9.3.2(androidTools 32.3.2)、Kotlin 2.4.10、KSP 2.3.11、Hilt 2.60.1、Room 3.0.1、Spotless 8.10.0、ktlint 1.8.0、Jacoco 0.8.15、Firebase BoM / Crashlytics / Performance。
+- **技术栈**:Gradle Wrapper 9.7.1(含 `distributionSha256Sum` 校验)、JDK 17+(CI 锁 25)、AGP 9.5.1(androidTools 32.3.2)、Kotlin 2.4.10、KSP 2.3.11、Hilt 2.60.1、Room 3.0.1、Spotless 8.10.0、ktlint 1.8.0、Jacoco 0.8.15、Firebase BoM / Crashlytics / Performance。
 - **仓库入口**:`settings.gradle.kts` 包含 `:lint` 与 `:ui-test-hilt-manifest`,并通过 `pluginManagement.includeBuild("build-logic")` 把 `build-logic` 作为复合构建加入。
 
 ## 2. 整体架构
@@ -136,7 +136,7 @@ android-lib-buildkit/                            # 根 Gradle 工程
 直接版本约束来自 `gradle/libs.versions.toml`:
 
 - **构建工具**:
-  - `androidGradlePlugin = "9.3.2"`(`com.android.tools.build:gradle-api` 等)、`androidTools = "32.3.2"`(`lint-api` / `lint-checks` / `lint-tests`)。
+  - `androidGradlePlugin = "9.5.1"`(`com.android.tools.build:gradle-api` 等)、`androidTools = "32.3.2"`(`lint-api` / `lint-checks` / `lint-tests`)。
   - `kotlin = "2.4.10"`(`kotlin-stdlib-jdk8` / `kotlin-test` / `kotlin-metadata-jvm` / `kotlin-gradle-plugin` / `compose-compiler-gradle-plugin`)。
   - `ksp = "2.3.11"`、`room = "3.0.1"`、`hilt = "2.60.1"`、`spotless = "8.10.0"`、`ktlint = "1.8.0"`、`jacoco = "0.8.15"`、`truth = "1.4.5"`、`junit4 = "4.13.2"`、`androidDesugarJdkLibs = "2.1.5"`。
   - Firebase:`firebaseCrashlyticsPlugin = "3.0.8"`、`firebasePerfPlugin = "2.0.2"`、`gmsPlugin = "4.5.0"`。
@@ -178,7 +178,7 @@ android-lib-buildkit/                            # 根 Gradle 工程
   - `:lint` 是纯 Java 模块,无法依赖 `:core-designsystem` 的 composable 引用,因此 DesignSystemDetector 维护**硬编码**名称映射表;新增/改名 design system 组件必须同步更新该表。
   - `:lint` 自身在 lint-api 32.x 上构建,要求 JVM 17;`minApi = 12`、`api = CURRENT_API`。
 - **已知风险 / 遗留事项**:
-  - `CHANGELOG.md` "Unreleased" 已记录 JDK 25 / Gradle 9.7.1 / AGP 9.3.1 / Kotlin 2.4.10 等基线,以及 Room 3.0.1(`androidx.room3`)、Hilt 2.60.1、Compose BOM 切稳定通道(2026.08.00)等迁移;`gradle/libs.versions.toml` 当前值(AGP 9.3.2、androidTools 32.3.2)与 README/CHANGELOG 中描述的 AGP 9.3.1 存在偏差,可能尚未合入文档;CHANGELOG 内文也写"minSdk 缺省 23",但代码 `findVersionOrDefault("minSdk", 24)` 与 `KotlinAndroid.kt` 实际取值以 24 为准。
+  - `CHANGELOG.md` "Unreleased" 已记录 JDK 25 / Gradle 9.7.1 / AGP 9.3.1 / Kotlin 2.4.10 等基线,以及 Room 3.0.1(`androidx.room3`)、Hilt 2.60.1、Compose BOM 切稳定通道(2026.08.00)等迁移;AGP 基线已统一升至 9.5.1(2026-11-20),历史 9.3.1/9.3.2 文档偏差已消除;CHANGELOG 内文也写"minSdk 缺省 23",但代码 `findVersionOrDefault("minSdk", 24)` 与 `KotlinAndroid.kt` 实际取值以 24 为准。
   - `benchmarks/` 目录在 README 中被标注为"仅作参考,未接入 `settings.gradle.kts`",且 CHANGELOG 的 Removed 段提到 `benchmarks/` 残留目录已删除,实际仓库根目录目前**不包含** `benchmarks/`,与 README 描述存在文档漂移。
   - `AndroidLibraryConventionPlugin` 在 `ConfigureLibraryExtension` 上读取 `findVersionOrDefault("targetSdk", 37)` 用于 `testOptions.targetSdk` 与 `lint.targetSdk`;消费方覆盖 `targetSdk` 时,这两个值会同步更新,但 `defaultConfig.targetSdk` 不在此处赋值(application 模块才设),library 模块需要消费方自行处理 `defaultConfig.targetSdk` 或保留 lint/test 自同步。
   - `Jacoco.kt` 的 `create{Variant}CombinedCoverageReport` 仅 `dependsOn("test{Variant}UnitTest")`,androidTest 数据需消费方在 CI 外部 device farm 提前准备好(注释明确说明)。
